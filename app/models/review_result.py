@@ -1,0 +1,1 @@
+"""Review result model."""
