@@ -1,1 +1,9 @@
-"""Application constants."""
+DEFAULT_BRANCH = "main"
+
+AI_BRANCH_PREFIX = "ai"
+
+MAX_FILE_SIZE_BYTES = 1_000_000
+
+MAX_FILES_PER_ANALYSIS = 100
+
+DEFAULT_FILE_ENCODING = "utf-8"
