@@ -1,1 +1,40 @@
-"""Run typecheck tool."""
+"""Run mypy when it is available, without arbitrary commands."""
+
+import shutil
+import subprocess
+from pathlib import Path
+
+from app.core.config import settings
+from app.models.command_result import CommandResult
+
+
+def run_typecheck(repository_path: Path) -> CommandResult:
+    executable = shutil.which("mypy")
+    command = [executable or "mypy", "."]
+    command_text = " ".join(command)
+    if executable is None:
+        return CommandResult(
+            success=False, available=False, command=command_text,
+            issues=["mypy no está disponible en el entorno"],
+        )
+    try:
+        result = subprocess.run(
+            command, cwd=Path(repository_path).resolve(), capture_output=True,
+            text=True, timeout=settings.command_timeout_seconds, check=False,
+        )
+        output = "\n".join(part for part in (result.stdout, result.stderr) if part)
+        return CommandResult(
+            success=result.returncode == 0, command=command_text,
+            exit_code=result.returncode, raw_output=output,
+            issues=[] if result.returncode == 0 else [output[-2000:] or "mypy encontró errores"],
+        )
+    except subprocess.TimeoutExpired as exc:
+        return CommandResult(
+            success=False, command=command_text, timed_out=True,
+            raw_output=str(exc), issues=["mypy excedió el timeout"],
+        )
+    except OSError as exc:
+        return CommandResult(
+            success=False, command=command_text, raw_output=str(exc),
+            issues=[f"No fue posible ejecutar mypy: {exc}"],
+        )

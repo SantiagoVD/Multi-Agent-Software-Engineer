@@ -10,6 +10,8 @@ class TestIssue(BaseModel):
 class TestResult(BaseModel):
     success: bool
 
+    available: bool = True
+
     command: str
 
     passed: int = 0
@@ -17,6 +19,10 @@ class TestResult(BaseModel):
     failed: int = 0
 
     skipped: int = 0
+
+    exit_code: int | None = None
+
+    timed_out: bool = False
 
     issues: list[TestIssue] = Field(
         default_factory=list
