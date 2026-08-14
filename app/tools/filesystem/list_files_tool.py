@@ -5,6 +5,7 @@ from pathlib import Path
 from app.utils.file_utils import (
     is_evidently_binary,
     is_ignored_directory,
+    is_sensitive_file,
     resolve_workspace_path,
 )
 
@@ -20,5 +21,6 @@ def list_files(workspace_root: Path, recursive: bool = True) -> list[str]:
         if path.is_file()
         and not any(is_ignored_directory(parent) for parent in path.relative_to(root).parents)
         and not is_evidently_binary(path)
+        and not is_sensitive_file(path)
     ]
     return sorted(files)

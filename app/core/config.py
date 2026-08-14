@@ -6,6 +6,10 @@ class Settings(BaseSettings):
 
     ollama_base_url: str = "http://localhost:11434"
     ollama_model: str = "qwen3:8b"
+    ollama_num_gpu: int | None = 0
+    ollama_timeout_seconds: int = 600
+
+    frontend_origin: str = "http://localhost:5173"
 
     workspace_root: str = "./workspaces"
 

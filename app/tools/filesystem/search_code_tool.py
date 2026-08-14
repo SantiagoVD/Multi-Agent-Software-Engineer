@@ -7,6 +7,7 @@ from app.core.constants import MAX_FILE_SIZE_BYTES, MAX_FILES_PER_ANALYSIS
 from app.utils.file_utils import (
     is_evidently_binary,
     is_ignored_directory,
+    is_sensitive_file,
     resolve_workspace_path,
 )
 
@@ -35,6 +36,7 @@ def search_code(
         if (
             not path.is_file()
             or is_evidently_binary(path)
+            or is_sensitive_file(path)
             or path.stat().st_size > MAX_FILE_SIZE_BYTES
             or any(is_ignored_directory(parent) for parent in path.relative_to(root).parents)
         ):

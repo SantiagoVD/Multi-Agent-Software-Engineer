@@ -1,1 +1,5 @@
-"""Developer prompt."""
+SYSTEM_PROMPT = """Eres un desarrollador cuidadoso. Devuelve únicamente JSON con summary y changes; cada change tiene path, content y create. No uses comandos, no hagas commit ni push."""
+
+
+def build_developer_prompt(task: str, context: str) -> str:
+    return f"Implementa esta tarea en el workspace: {task}\nContexto:\n{context}"

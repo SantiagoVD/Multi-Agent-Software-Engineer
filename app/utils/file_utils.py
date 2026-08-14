@@ -4,7 +4,6 @@ from pathlib import Path
 
 from app.exceptions.tool_exceptions import PathSecurityError
 
-
 IGNORED_DIRECTORIES = {
     ".git", ".venv", "venv", "node_modules", "__pycache__",
     ".pytest_cache", ".mypy_cache", ".ruff_cache",
@@ -14,6 +13,11 @@ MAX_BINARY_SUFFIXES = {
     ".7z", ".avi", ".bin", ".bmp", ".class", ".dll", ".exe", ".gif",
     ".ico", ".jpeg", ".jpg", ".mov", ".mp3", ".mp4", ".pdf", ".png",
     ".pyc", ".so", ".tar", ".ttf", ".wav", ".webp", ".woff", ".zip",
+}
+
+SENSITIVE_FILENAMES = {
+    ".env", ".env.local", ".env.production", ".env.development",
+    "id_rsa", "id_ed25519", "credentials.json", "secrets.json",
 }
 
 
@@ -36,3 +40,7 @@ def is_ignored_directory(path: Path) -> bool:
 
 def is_evidently_binary(path: Path) -> bool:
     return path.suffix.lower() in MAX_BINARY_SUFFIXES
+
+
+def is_sensitive_file(path: Path) -> bool:
+    return path.name in SENSITIVE_FILENAMES or path.name.endswith(".pem")

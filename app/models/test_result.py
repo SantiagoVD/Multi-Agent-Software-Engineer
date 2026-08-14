@@ -2,12 +2,14 @@ from pydantic import BaseModel, Field
 
 
 class TestIssue(BaseModel):
+    __test__ = False
     test_name: str | None = None
     message: str
     file: str | None = None
 
 
 class TestResult(BaseModel):
+    __test__ = False
     success: bool
 
     available: bool = True
