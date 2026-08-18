@@ -17,13 +17,13 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
       headers: { 'Content-Type': 'application/json', ...init?.headers },
     })
   } catch {
-    throw new ApiError('The backend is offline or unreachable. Check that FastAPI is running on port 8000.')
+    throw new ApiError('No se puede conectar con el backend. Verifica que FastAPI esté ejecutándose en el puerto 8000.')
   }
   if (!response.ok) {
     const payload: unknown = await response.json().catch(() => null)
     const detail = typeof payload === 'object' && payload !== null && 'detail' in payload
       ? String((payload as { detail: unknown }).detail)
-      : `Request failed with status ${response.status}`
+      : `La solicitud falló con estado ${response.status}`
     throw new ApiError(detail, response.status)
   }
   return response.json() as Promise<T>

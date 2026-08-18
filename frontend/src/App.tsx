@@ -41,7 +41,7 @@ export default function App() {
       if (!finalResult.success) setError(finalResult.summary)
       window.setTimeout(() => document.getElementById('results')?.scrollIntoView({ behavior: 'smooth' }), 100)
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : 'An unexpected error occurred.')
+      setError(caught instanceof Error ? caught.message : 'Ocurrió un error inesperado.')
     } finally {
       setRunning(false)
     }
@@ -53,17 +53,17 @@ export default function App() {
       <Header backendOnline={backendOnline} ollama={ollama} />
       <main>
         <section className="hero">
-          <div className="hero-kicker"><span /><span>Autonomous software delivery</span></div>
-          <h1>Ship code with an<br /><em>AI engineering team.</em></h1>
-          <p>Give the team a repository and a goal. Four specialized agents analyze, implement, test and review every change inside an isolated workspace.</p>
-          <div className="hero-proof"><span><i>01</i>Read architecture</span><span><i>02</i>Write safely</span><span><i>03</i>Verify quality</span><span><i>04</i>Review outcome</span></div>
+          <div className="hero-kicker"><span /><span>Entrega de software autónoma</span></div>
+          <h1>Desarrolla software con un<br /><em>equipo de IA.</em></h1>
+          <p>Indica un repositorio y un objetivo. Cuatro agentes especializados analizan, implementan, verifican y revisan cada cambio dentro de un workspace aislado.</p>
+          <div className="hero-proof"><span><i>01</i>Analizar arquitectura</span><span><i>02</i>Implementar con seguridad</span><span><i>03</i>Verificar calidad</span><span><i>04</i>Revisar resultado</span></div>
         </section>
         {error && <ErrorPanel message={error} onDismiss={() => setError(null)} />}
         <TaskForm disabled={running} backendOnline={backendOnline} onSubmit={runTask} />
         <AgentWorkflow running={running} result={result} />
         <div id="results">{result && <ResultPanel result={result} />}</div>
       </main>
-      <footer><span>Multi-Agent Software Engineer <b>V1</b></span><span>Built for real repositories · No commits · No pushes</span></footer>
+      <footer><span>Ingeniero de Software Multiagente <b>V1</b></span><span>Diseñado para repositorios reales · Sin cambios en la rama base</span></footer>
     </div>
   )
 }
