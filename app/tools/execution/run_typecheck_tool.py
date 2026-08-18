@@ -1,7 +1,8 @@
 """Run mypy when it is available, without arbitrary commands."""
 
-import shutil
+import importlib.util
 import subprocess
+import sys
 from pathlib import Path
 
 from app.core.config import settings
@@ -9,10 +10,9 @@ from app.models.command_result import CommandResult
 
 
 def run_typecheck(repository_path: Path) -> CommandResult:
-    executable = shutil.which("mypy")
-    command = [executable or "mypy", "."]
+    command = [sys.executable, "-m", "mypy", "."]
     command_text = " ".join(command)
-    if executable is None:
+    if importlib.util.find_spec("mypy") is None:
         return CommandResult(
             success=False, available=False, command=command_text,
             issues=["mypy no está disponible en el entorno"],

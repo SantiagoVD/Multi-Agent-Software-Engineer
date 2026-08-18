@@ -11,6 +11,7 @@ from app.models.task import Task
 from app.prompts.developer_prompt import SYSTEM_PROMPT, build_developer_prompt
 from app.tools.filesystem.create_file_tool import create_file
 from app.tools.filesystem.write_file_tool import write_file
+from app.utils.file_utils import resolve_workspace_path
 
 
 class DeveloperAgent(BaseAgent):
@@ -29,7 +30,8 @@ class DeveloperAgent(BaseAgent):
         created: list[str] = []
         try:
             for change in plan.changes:
-                if change.create:
+                target = resolve_workspace_path(repository_path, change.path)
+                if change.create and not target.exists():
                     create_file(repository_path, change.path, change.content)
                     created.append(change.path)
                 else:

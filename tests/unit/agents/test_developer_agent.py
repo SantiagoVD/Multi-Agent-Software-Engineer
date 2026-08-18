@@ -18,3 +18,14 @@ def test_developer_agent_applies_structured_plan(tmp_path: Path) -> None:
     result = DeveloperAgent(FakeProvider()).run(task, tmp_path, TaskMemory(task_id="TASK-1"))
     assert result.success
     assert (tmp_path / "new.py").exists()
+
+
+def test_developer_agent_updates_existing_file_when_plan_marks_it_as_new(tmp_path: Path) -> None:
+    (tmp_path / "new.py").write_text("VALUE = 0", encoding="utf-8")
+    task = Task(id="TASK-2", repository_url="local", task="update file", branch="main")
+
+    result = DeveloperAgent(FakeProvider()).run(task, tmp_path, TaskMemory(task_id="TASK-2"))
+
+    assert result.success
+    assert result.files_modified == ["new.py"]
+    assert (tmp_path / "new.py").read_text(encoding="utf-8") == "VALUE = 1"

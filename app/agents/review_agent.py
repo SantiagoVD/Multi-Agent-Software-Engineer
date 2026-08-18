@@ -3,6 +3,7 @@
 from pathlib import Path
 
 from app.agents.base_agent import BaseAgent
+from app.core.config import settings
 from app.llm.llm_provider import LLMProviderError
 from app.memory.task_memory import TaskMemory
 from app.models.development_result import DevelopmentResult
@@ -21,8 +22,11 @@ from app.tools.git.git_diff_tool import git_diff
 
 class ReviewAgent(BaseAgent):
     def run(self, task: Task, repository_path: Path, memory: TaskMemory, development: DevelopmentResult | None = None, tests: TestResult | None = None, repository_context: RepositoryContext | None = None) -> ReviewResult:
-        diff = git_diff(repository_path)
-        if self.provider is not None:
+        try:
+            diff = git_diff(repository_path)
+        except RuntimeError:
+            diff = ""
+        if self.provider is not None and settings.review_llm_enabled:
             try:
                 result = self.provider.generate_structured(
                     SYSTEM_PROMPT,

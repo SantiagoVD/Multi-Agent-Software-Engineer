@@ -12,6 +12,7 @@ export interface TaskRequest {
   repository_url: string
   task: string
   branch?: string | null
+  publish_branch?: boolean
 }
 
 export interface TestIssue {
@@ -58,7 +59,17 @@ export interface FinalResult {
   files_modified: string[]
   test_result?: TestResult | null
   review_result?: ReviewResult | null
+  publication?: BranchPublication | null
   iterations: number
+}
+
+export interface BranchPublication {
+  requested: boolean
+  published: boolean
+  branch?: string | null
+  remote: string
+  commit?: string | null
+  message: string
 }
 
 export interface HealthResult { status: string }

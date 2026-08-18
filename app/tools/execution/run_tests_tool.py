@@ -24,11 +24,14 @@ def run_tests(repository_path: Path) -> TestResult:
         )
         output = _output(result)
         unavailable = "No module named pytest" in output
+        no_tests = result.returncode == 5 and "no tests ran" in output.casefold()
         passed = _count(output, r"(\d+) passed")
         failed = _count(output, r"(\d+) failed")
         skipped = _count(output, r"(\d+) skipped")
+        if no_tests:
+            skipped = 1
         return TestResult(
-            success=result.returncode == 0 and not unavailable,
+            success=(result.returncode == 0 or no_tests) and not unavailable,
             available=not unavailable,
             command=command_text,
             passed=passed,

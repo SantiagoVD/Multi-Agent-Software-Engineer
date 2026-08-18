@@ -14,6 +14,17 @@ from app.tools.execution.run_typecheck_tool import run_typecheck
 class TestingAgent(BaseAgent):
     __test__ = False
     def run(self, task: Task, repository_path: Path, memory: TaskMemory) -> TestResult:
+        language = memory.repository_context.language if memory.repository_context else None
+        if language is not None and language != "Python":
+            result = TestResult(
+                success=True,
+                command="No fixed Python checks applicable",
+                skipped=1,
+                raw_output=f"Se omitieron pytest, Ruff y mypy: el repositorio fue detectado como {language}.",
+            )
+            memory.test_results.append(result)
+            self.record_tool(memory, "run_tests", True, result.raw_output or "")
+            return result
         tests = run_tests(repository_path)
         lint = run_linter(repository_path)
         typecheck = run_typecheck(repository_path)

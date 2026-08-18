@@ -12,6 +12,7 @@ const initialForm = {
   repository_url: '',
   task: '',
   branch: 'main',
+  publish_branch: false,
 }
 
 export function TaskForm({ disabled, backendOnline, onSubmit }: TaskFormProps) {
@@ -40,6 +41,7 @@ export function TaskForm({ disabled, backendOnline, onSubmit }: TaskFormProps) {
       repository_url: form.repository_url.trim(),
       task: form.task.trim(),
       branch: form.branch.trim() || null,
+      publish_branch: form.publish_branch,
     })
   }
 
@@ -62,6 +64,10 @@ export function TaskForm({ disabled, backendOnline, onSubmit }: TaskFormProps) {
         <label className="field branch-field">
           <span>Base branch <em>optional</em></span>
           <div className="input-shell"><svg viewBox="0 0 24 24"><circle cx="6" cy="5" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="6" cy="19" r="2"/><path d="M6 7v10M18 8c0 5-12 3-12 8"/></svg><input value={form.branch} onChange={(e) => setForm({ ...form, branch: e.target.value })} placeholder="main" disabled={disabled} /></div>
+        </label>
+        <label className="publish-field">
+          <input type="checkbox" checked={form.publish_branch} onChange={(e) => setForm({ ...form, publish_branch: e.target.checked })} disabled={disabled} />
+          <span><strong>Publish approved branch</strong><small>Commits and pushes only <code>ai/&lt;task-id&gt;</code>; never main.</small></span>
         </label>
         <div className="submit-area">
           {validation && <p className="validation-message">{validation}</p>}

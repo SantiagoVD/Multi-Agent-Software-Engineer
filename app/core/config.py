@@ -6,8 +6,14 @@ class Settings(BaseSettings):
 
     ollama_base_url: str = "http://localhost:11434"
     ollama_model: str = "qwen3:8b"
-    ollama_num_gpu: int | None = 0
-    ollama_timeout_seconds: int = 600
+    ollama_num_gpu: int | None = None
+    ollama_timeout_seconds: int = 300
+    ollama_think: bool = False
+    ollama_num_predict: int = 512
+    review_llm_enabled: bool = False
+
+    git_author_name: str = "Multi-Agent Software Engineer"
+    git_author_email: str = "agent@users.noreply.github.com"
 
     frontend_origin: str = "http://localhost:5173"
 

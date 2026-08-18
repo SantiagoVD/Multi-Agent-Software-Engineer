@@ -24,3 +24,10 @@ def test_optional_tools_return_structured_result(tmp_path: Path) -> None:
     assert typecheck.command
     assert isinstance(linter.available, bool)
     assert isinstance(typecheck.available, bool)
+
+
+def test_run_tests_skips_when_no_python_tests_are_present(tmp_path: Path) -> None:
+    result = run_tests(tmp_path)
+
+    assert result.success
+    assert result.skipped == 1

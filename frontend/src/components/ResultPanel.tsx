@@ -6,6 +6,7 @@ const severityTone: Record<IssueSeverity, string> = { low: 'sev-low', medium: 's
 export function ResultPanel({ result }: { result: FinalResult }) {
   const tests = result.test_result
   const review = result.review_result
+  const publication = result.publication
   return (
     <section className="result-section" aria-live="polite">
       <div className="result-hero">
@@ -34,6 +35,11 @@ export function ResultPanel({ result }: { result: FinalResult }) {
         <div className="result-card-title"><span>◇</span><div><h3>Code review</h3><p>{review?.summary ?? 'No review result returned'}</p></div>{review && <StatusBadge tone={review.status === 'approved' ? 'success' : 'warning'}>{review.status.replace('_', ' ')}</StatusBadge>}</div>
         {review?.issues.length ? <div className="review-issues">{review.issues.map((issue, index) => <div className="review-issue" key={`${issue.description}-${index}`}><span className={`severity ${severityTone[issue.severity]}`}>{issue.severity}</span><div><strong>{issue.file ? `${issue.file}${issue.line ? `:${issue.line}` : ''}` : 'General finding'}</strong><p>{issue.description}</p>{issue.recommendation && <small>Recommendation · {issue.recommendation}</small>}</div></div>)}</div> : review ? <p className="empty-state review-clean">No review issues were reported.</p> : null}
       </article>
+
+      {publication && <article className="result-card publication-card">
+        <div className="result-card-title"><span>⇡</span><div><h3>Branch publication</h3><p>{publication.message}</p></div><StatusBadge tone={publication.published ? 'success' : 'warning'}>{publication.published ? 'published' : 'not published'}</StatusBadge></div>
+        {publication.branch && <p className="publication-detail">Branch <code>{publication.branch}</code>{publication.commit && <> · commit <code>{publication.commit.slice(0, 8)}</code></>}</p>}
+      </article>}
 
       {result.iterations > 1 && <div className="iteration-note"><strong>{result.iterations} workflow iterations</strong><span>The backend returned the final result only; per-agent retry events are not available in V1.</span></div>}
     </section>

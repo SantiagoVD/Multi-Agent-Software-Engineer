@@ -5,8 +5,14 @@ from app.models.task import Task
 
 
 class ContextManager:
-    def __init__(self, max_file_chars: int = 12_000, max_history_items: int = 8) -> None:
+    def __init__(
+        self,
+        max_file_chars: int = 1_200,
+        max_total_file_chars: int = 3_000,
+        max_history_items: int = 8,
+    ) -> None:
         self.max_file_chars = max_file_chars
+        self.max_total_file_chars = max_total_file_chars
         self.max_history_items = max_history_items
 
     def build_context(self, agent: str, task: Task, memory: TaskMemory) -> str:
@@ -40,6 +46,11 @@ class ContextManager:
 
     def _files(self, memory: TaskMemory) -> str:
         chunks = []
+        remaining = self.max_total_file_chars
         for path, content in list(memory.relevant_files.items())[:10]:
-            chunks.append(f"--- {path} ---\n{content[:self.max_file_chars]}")
+            if remaining <= 0:
+                break
+            snippet = content[:min(self.max_file_chars, remaining)]
+            chunks.append(f"--- {path} ---\n{snippet}")
+            remaining -= len(snippet)
         return "Archivos relevantes:\n" + "\n".join(chunks)

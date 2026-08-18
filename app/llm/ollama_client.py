@@ -31,7 +31,11 @@ class OllamaClient(LLMProvider):
                 {"role": "user", "content": user_prompt},
             ],
             "stream": False,
-            "options": {"temperature": temperature},
+            "think": settings.ollama_think,
+            "options": {
+                "temperature": temperature,
+                "num_predict": settings.ollama_num_predict,
+            },
         }
         if settings.ollama_num_gpu is not None:
             payload["options"]["num_gpu"] = settings.ollama_num_gpu

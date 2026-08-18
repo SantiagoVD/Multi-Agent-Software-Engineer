@@ -1,7 +1,8 @@
 """Run Ruff without allowing automatic code modifications."""
 
-import shutil
+import importlib.util
 import subprocess
+import sys
 from pathlib import Path
 
 from app.core.config import settings
@@ -9,10 +10,9 @@ from app.models.command_result import CommandResult
 
 
 def run_linter(repository_path: Path) -> CommandResult:
-    executable = shutil.which("ruff")
-    command = [executable or "ruff", "check", "."]
+    command = [sys.executable, "-m", "ruff", "check", "."]
     command_text = " ".join(command)
-    if executable is None:
+    if importlib.util.find_spec("ruff") is None:
         return CommandResult(
             success=False, available=False, command=command_text,
             issues=["Ruff no está disponible en el entorno"],

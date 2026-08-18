@@ -18,9 +18,15 @@ class TaskRequest(BaseModel):
         description="Branch base desde el cual trabajar."
     )
 
+    publish_branch: bool = Field(
+        default=False,
+        description="Publica la rama del agente tras aprobarse los checks."
+    )
+
 
 class Task(BaseModel):
     id: str
     repository_url: str
     task: str
     branch: str
+    publish_branch: bool = False

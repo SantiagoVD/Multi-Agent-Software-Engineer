@@ -18,6 +18,7 @@ from app.models.task_status import TaskStatus
 from app.orchestrator.workflow import set_status
 from app.orchestrator.workflow_guard import WorkflowError, WorkflowGuard
 from app.orchestrator.workflow_state import WorkflowState
+from app.tools.git.publish_branch_tool import publish_branch
 from app.workspace.workspace_manager import WorkspaceManager
 
 
@@ -46,7 +47,11 @@ class Orchestrator:
             id=f"TASK-{uuid4().hex[:8].upper()}",
             repository_url=request.repository_url,
             task=request.task,
-            branch=request.branch or "main",
+            # An empty branch delegates selection to the cloned repository's
+            # currently checked-out branch. This supports repositories whose
+            # default branch is not named "main".
+            branch=request.branch or "",
+            publish_branch=request.publish_branch,
         )
         memory = TaskMemory(task_id=task.id, task_description=task.task)
         self.memory_store.save(memory)
@@ -77,11 +82,22 @@ class Orchestrator:
                 )
                 if state.review_result.status == ReviewStatus.APPROVED:
                     set_status(state, TaskStatus.COMPLETED, self.guard)
+                    publication = None
+                    summary = "Tarea completada y aprobada."
+                    if task.publish_branch:
+                        publication = publish_branch(
+                            repository_path,
+                            state.workspace.working_branch,
+                            memory.modified_files,
+                            task.task,
+                        )
+                        summary = f"{summary} {publication.message}"
                     return FinalResult(
                         task_id=task.id, status=state.status, success=True,
-                        summary="Tarea completada y aprobada.",
+                        summary=summary,
                         files_modified=memory.modified_files,
                         test_result=state.test_result, review_result=state.review_result,
+                        publication=publication,
                         iterations=state.iterations,
                     )
                 if iteration + 1 >= settings.max_workflow_iterations:
